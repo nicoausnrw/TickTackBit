@@ -1,26 +1,26 @@
 #include <Arduino.h>
 
-#define A1 5                // D1
-#define A2 4                // D2
-#define BUTTON 14           // D5
-#define BUTTON_Calibrate 13 // D7
-#define BUTTON_OFF 12       // D6
+// CONFIG ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define A1 5                // D1 Elektromagnet Pin 1
+#define A2 4                // D2 Elektromagnet Pin 2
+#define BUTTON 14           // D5 Button zum Vorspuhlen
+#define BUTTON_Calibrate 13 // D7 Sekunden auf Null setzen
+#define BUTTON_OFF 12       // D6 Schaltet die Uhr in Standby, Zähler läuft weiter aber Uhr Tickt nicht.
+const int RelayOnTime = 350;  // wieviel ms, soll der Magnet eingeschaltet werden? Sollte es Schaltprobleme geben sollte dieser Wert erhöht werden
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 unsigned long previousMillis = 0; // Zeitstempel für den letzten Schaltvorgang. Wichtig um die Minunten sauber durch zu zählen.
-
-unsigned long lastTickStart = 0; // Wann ist der Letzte Tick gestartet?
-
-unsigned long now = 0; // zwischenspeicher für aktuelle Millsec, damit alle funktionen hinterander mit der selben Zeit starten.
-
-const int jumpInterval = 60000; // wie oft sol die uhr weiter gehen
-const int RelayOnTime = 1000;
-int tickPosition = 0; // Welcher der beiden Magneten ist gerade dran
-
-int restTicks = 0; // wieviele Mununten soll noch vorgespult werden bzw gewartet werden soll
-
-// Stauts der Funktion wird angageben 0=startet, 1=läuft, 2=ende
-int statusTick = 0;
-
+unsigned long lastTickStart = 0;  // Wann ist der Letzte Tick gestartet?
+unsigned long now = 0;            // zwischenspeicher für aktuelle Millsec, damit alle funktionen hinterander mit der selben Zeit starten.
+const int jumpInterval = 60000;   // wie oft soll die uhr weiter gehen Default ist eine Minute
+int tickPosition = 0;             // Welcher der beiden Magneten ist gerade dran
+int restTicks = 0;                // wieviele Minuten soll noch vorgespult werden bzw gewartet werden soll
+int statusTick = 0;               // Status der Funktion wird angageben 0=startet, 1=läuft, 2=ende
 
 
 
@@ -41,7 +41,6 @@ void runTick(int anFrageStarttime = 0)
   }
 
   // ist die Startzeit+Indervall dauer noch in der Zukunft, akak größer als jetziger Zeitpunkt, dann führe aus.
-  // im ersten schritt wird der
   if (lastTickStart + RelayOnTime >= now)
   {
     // Ein Tick ist gerade noch in Betrieb
@@ -125,7 +124,7 @@ void setup()
 void loop()
 {
 
-  // Speichert die aktuellen milliseckunden, da dieser Wert mehrfach gebraucht wird und da es eventuell beim wahcsen des Programm am ende schon eine neue millisekunde sein kann was unerwartet Fehler verursachen kann. 
+  // Speichert die aktuellen milliseckunden, da dieser Wert mehrfach gebraucht wird und da es eventuell beim wachsen des Programm am ende schon eine neue millisekunde sein kann was unerwartet Fehler verursachen kann. 
   now = millis(); 
   //Serial.println(now);
 
